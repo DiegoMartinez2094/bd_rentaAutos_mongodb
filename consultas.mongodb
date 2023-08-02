@@ -50,3 +50,13 @@ db.Alquiler.aggregate([
 
     //.6 Listar los empleados con el cargo de "Vendedor"
     db.Empleado.find({ Cargo: 'Vendedor' }).pretty();
+
+     //.7 Mostrar la cantidad total de automóviles disponibles en cada sucursal:
+  db.Sucursal_Automovil.aggregate([
+    {
+      $group: {
+        _id: "$ID_Sucursal",
+        Total_Automoviles_Disponibles: { $sum: "$Cantidad_Disponible" }
+      }
+    }
+  ]);
