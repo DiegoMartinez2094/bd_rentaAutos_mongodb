@@ -7,7 +7,8 @@ use ("renta_autos");
   db.Automovil.find({}).pretty();
 
   //3. Listar todos los alquileres activos junto con los datos de los clientes relacionados
-db.Alquiler.aggregate([
+  use ("renta_autos");
+  db.Alquiler.aggregate([
     {
       $match: { Estado: 'Activo' }
     },

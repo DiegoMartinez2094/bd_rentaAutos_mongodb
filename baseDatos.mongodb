@@ -142,3 +142,4 @@ db.Registro_Devolucion.insertMany([
   { ID_Registro: 5, ID_Alquiler: 5, ID_Empleado: 2, Fecha_Devolucion: new Date('2023-07-14'), Combustible_Devuelto: 18.00, Kilometraje_Devuelto: 2000, Monto_Adicional: 12.00
   },
 ]);
+

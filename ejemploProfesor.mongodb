@@ -1,0 +1,81 @@
+use("renta_autos");
+db.getCollection("Alquiler").aggregate([
+    {
+      $lookup: {
+        from: "Cliente",
+        localField: "ID_Cliente", /**de contrato: es el campo en el que se buscarán los valores
+         coincidentes en la colección actual para relacionarlos con la colección externa.*/
+     
+        foreignField: "ID_Cliente",/*se buscarán documentos en la colección "Cliente" donde el campo "ID" coincida
+        con el valor del campo "ID_Cliente" en la colección "Contrato".*/
+
+        as: "fk" /**Luego, los resultados de esta operación de join se asignarán al campo "fk"
+        en los documentos de la colección "Contrato". Esto permite que cada documento en la colección 
+        "Contrato" tenga información adicional del cliente asociado, obtenida a través del join con la colección "Cliente". */
+      }
+    },
+    {
+        $unwind: "$fk" /**si hay múltiples coincidencias en la colección "Cliente" para un solo contrato. $unwind deshace ese 
+        arreglo y crea un documento separado para cada elemento del arreglo. Si no hay múltiples coincidencias, esta etapa no 
+        hace nada. */
+    },
+    {
+        $group: {
+          _id: "$ID_Cliente",
+          ID_Cliente: {$first: "$ID_Cliente"},
+          fk: {$push:"$fk"}
+        }
+    },
+    {
+        $project: {
+          Fecha_Inicio: 0,
+          Fecha_Fin: 0,
+          ID_Cliente: 0,
+          "fk.ID_Cliente":0
+        }
+    }
+  ]);
+
+
+  use("renta_autos");
+  db.Alquiler.aggregate([
+    // Filtrar los alquileres con Estado: 'Activo'
+    { $match: { Estado: 'Activo' } },
+  
+    // Realizar un $lookup para obtener los datos de cliente relacionados
+    {
+      $lookup: {
+        from: 'Cliente',
+        localField: 'ID_Cliente',
+        foreignField: 'ID_Cliente',
+        as: 'cliente_data'
+      }
+    },
+  
+    // Desenrollar el resultado del $lookup, ya que puede haber múltiples clientes relacionados para un alquiler
+    { $unwind: '$cliente_data' },
+  
+    // Agrupar los datos para obtener el resultado final
+    {
+      $group: {
+        _id: '$ID_Alquiler',
+        ID_Alquiler: { $first: '$ID_Alquiler' },
+        ID_Cliente: { $first: '$ID_Cliente' },
+        ID_Automovil: { $first: '$ID_Automovil' },
+        Fecha_Inicio: { $first: '$Fecha_Inicio' },
+        Fecha_Fin: { $first: '$Fecha_Fin' },
+        Costo_Total: { $first: '$Costo_Total' },
+        Estado: { $first: '$Estado' },
+        Cliente: {
+          $mergeObjects: {
+            Nombre: '$cliente_data.Nombre',
+            Apellido: '$cliente_data.Apellido',
+            DNI: '$cliente_data.DNI',
+            Direccion: '$cliente_data.Direccion',
+            Telefono: '$cliente_data.Telefono',
+            Email: '$cliente_data.Email',
+          }
+        }
+      }
+    }
+  ]);
