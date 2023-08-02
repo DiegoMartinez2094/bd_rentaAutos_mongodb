@@ -1,0 +1,144 @@
+
+// use ("nombrebd"); /**crear la base de datos */
+// db.dropDatabase("informacion"); /*eliminar la base de datos */
+// db.nombredebasedatos.insertOne({...}); /**insertar un dato a la base de datos */
+
+// db.renta_autos.insertOne({
+//     marca: "Toyota",
+//     modelo: "Corolla",
+//     año: 2023,
+//     color: "Negro"
+// })
+
+// db.nombredebasedatos.insertMany([{...},{...},{...}]); /**insertar varios datos a la base de datos */
+// db.renta_autos.findOne({ marca: "Toyota" }); /**buscar por dato */
+
+// db.renta_autos.insertOne({
+//     marca: "Toyota",
+//     modelo: "Corolla",
+//     año: 2023,
+//     color: "Negro"
+// })
+
+
+ use("renta_autos");
+
+ db.Cliente.insertMany([
+    {
+      ID_Cliente: 1, Nombre: 'Juan', Apellido: 'Perez', DNI: '12345678', Direccion: 'Calle 123', Telefono: '11111111', Email: 'juan@example.com'
+    },
+    { ID_Cliente: 2, Nombre: 'Maria', Apellido: 'Lopez', DNI: '87654321', Direccion: 'Avenida 456', Telefono: '22222222', Email: 'maria@example.com'
+    },
+    { ID_Cliente: 3, Nombre: 'Pedro', Apellido: 'Gonzalez', DNI: '56789012', Direccion: 'Plaza 789', Telefono: '33333333', Email: 'pedro@example.com'
+    },
+    { ID_Cliente: 4, Nombre: 'Laura', Apellido: 'Martinez', DNI: '09876543', Direccion: 'Ruta 101', Telefono: '44444444', Email: 'laura@example.com'
+    },
+    { ID_Cliente: 5, Nombre: 'Carlos', Apellido: 'Gomez', DNI: '43210987', Direccion: 'Calle 987', Telefono: '55555555', Email: 'carlos@example.com'
+    },
+  ]);
+
+  db.Automovil.insertMany([
+    { ID_Automovil: 1, Marca: 'Toyota', Modelo: 'Corolla', Anio: 2021, Tipo: 'Sedan', Capacidad: 5, Precio_Diario: 50.00
+    },
+    { ID_Automovil: 2, Marca: 'Honda', Modelo: 'Civic', Anio: 2020, Tipo: 'Sedan', Capacidad: 5, Precio_Diario: 45.00
+    },
+    { ID_Automovil: 3, Marca: 'Ford', Modelo: 'Explorer', Anio: 2019, Tipo: 'SUV', Capacidad: 7, Precio_Diario: 60.00
+    },
+    { ID_Automovil: 4, Marca: 'Chevrolet', Modelo: 'Equinox', Anio: 2022, Tipo: 'SUV', Capacidad: 5, Precio_Diario: 55.00
+    },
+    { ID_Automovil: 5, Marca: 'Nissan', Modelo: 'Sentra', Anio: 2022, Tipo: 'Sedan', Capacidad: 4, Precio_Diario: 48.00
+    },
+  ]);
+
+db.Alquiler.insertMany([
+    { ID_Alquiler: 1, ID_Cliente: 1, ID_Automovil: 3, Fecha_Inicio: new Date('2023-07-01'), Fecha_Fin: new Date('2023-07-05'), Costo_Total: 240.00, Estado: 'Activo'
+    },
+    { ID_Alquiler: 2, ID_Cliente: 2, ID_Automovil: 4, Fecha_Inicio: new Date('2023-07-02'), Fecha_Fin: new Date('2023-07-07'), Costo_Total: 275.00, Estado: 'Disponible'
+    },
+    { ID_Alquiler: 3, ID_Cliente: 3, ID_Automovil: 1, Fecha_Inicio: new Date('2023-07-03'), Fecha_Fin: new Date('2023-07-06'), Costo_Total: 150.00, Estado: 'Activo'
+    },
+    { ID_Alquiler: 4, ID_Cliente: 4, ID_Automovil: 5, Fecha_Inicio: new Date('2023-07-04'), Fecha_Fin: new Date('2023-07-08'), Costo_Total: 192.00, Estado: 'Activo'
+    },
+    { ID_Alquiler: 5, ID_Cliente: 5, ID_Automovil: 2, Fecha_Inicio: new Date('2023-07-05'), Fecha_Fin: new Date('2023-07-09'), Costo_Total: 225.00, Estado: 'Disponible'
+    },
+  ]);
+  
+  db.Reserva.insertMany([
+    { ID_Reserva: 1, ID_Cliente: 2, ID_Automovil: 1, Fecha_Reserva: new Date('2023-07-06'), Fecha_Inicio: new Date('2023-07-10'), Fecha_Fin: new Date('2023-07-15'), Estado: 'Pendiente'
+    },
+    { ID_Reserva: 2, ID_Cliente: 3, ID_Automovil: 3, Fecha_Reserva: new Date('2023-07-07'), Fecha_Inicio: new Date('2023-07-12'), Fecha_Fin: new Date('2023-07-17'), Estado: 'Pendiente'
+    },
+    { ID_Reserva: 3, ID_Cliente: 4, ID_Automovil: 2, Fecha_Reserva: new Date('2023-07-08'), Fecha_Inicio: new Date('2023-07-14'), Fecha_Fin: new Date('2023-07-19'), Estado: 'Pendiente'
+    },
+    { ID_Reserva: 4, ID_Cliente: 5, ID_Automovil: 4, Fecha_Reserva: new Date('2023-07-09'), Fecha_Inicio: new Date('2023-07-15'), Fecha_Fin: new Date('2023-07-20'), Estado: 'Pendiente'
+    },
+    { ID_Reserva: 5, ID_Cliente: 1, ID_Automovil: 5, Fecha_Reserva: new Date('2023-07-10'), Fecha_Inicio: new Date('2023-07-16'), Fecha_Fin: new Date('2023-07-21'), Estado: 'Pendiente'
+    },
+  ]);
+
+
+db.Sucursal.insertMany([
+    { ID_Sucursal: 1, Nombre: 'Sucursal A', Direccion: 'Calle Principal 123', Telefono: '1111111111'
+    },
+    { ID_Sucursal: 2, Nombre: 'Sucursal B', Direccion: 'Avenida Central 456', Telefono: '2222222222'
+    },
+    { ID_Sucursal: 3, Nombre: 'Sucursal C', Direccion: 'Plaza Principal 789', Telefono: '3333333333'
+    },
+    { ID_Sucursal: 4, Nombre: 'Sucursal D', Direccion: 'Ruta Secundaria 101', Telefono: '4444444444'
+    },
+    { ID_Sucursal: 5, Nombre: 'Sucursal E', Direccion: 'Carretera Principal 987', Telefono: '5555555555'
+    },
+  ]);
+  
+  db.Sucursal_Automovil.insertMany([
+    { ID_Sucursal: 1, ID_Automovil: 1, Cantidad_Disponible: 3
+    },
+    { ID_Sucursal: 2, ID_Automovil: 2, Cantidad_Disponible: 5
+    },
+    { ID_Sucursal: 3, ID_Automovil: 3, Cantidad_Disponible: 2
+    },
+    { ID_Sucursal: 4, ID_Automovil: 4, Cantidad_Disponible: 4
+    },
+    { ID_Sucursal: 5, ID_Automovil: 5, Cantidad_Disponible: 1
+    },
+  ]);
+
+db.Empleado.insertMany([
+  { ID_Empleado: 1, Nombre: 'Ana', Apellido: 'Gomez', DNI: '123456789', Direccion: 'Calle 111', Telefono: '1111111111', Cargo: 'Gerente'
+  },
+  { ID_Empleado: 2, Nombre: 'Luis', Apellido: 'Rodriguez', DNI: '987654321', Direccion: 'Avenida 222', Telefono: '2222222222', Cargo: 'Asistente'
+  },
+  { ID_Empleado: 3, Nombre: 'Elena', Apellido: 'Fernandez', DNI: '456789012', Direccion: 'Plaza 333', Telefono: '3333333333', Cargo: 'Vendedor'
+  },
+  { ID_Empleado: 4, Nombre: 'Mario', Apellido: 'Torres', DNI: '210987654', Direccion: 'Ruta 444', Telefono: '4444444444', Cargo: 'Recepcionista'
+  },
+  { ID_Empleado: 5, Nombre: 'Carlos', Apellido: 'Hernandez', DNI: '543210987', Direccion: 'Carretera 555', Telefono: '5555555555', Cargo: 'Chofer'
+  },
+]);
+
+db.Registro_Entrega.insertMany([
+  { ID_Registro: 1, ID_Alquiler: 1, ID_Empleado: 3, Fecha_Entrega: new Date('2023-07-05'), Combustible_Entregado: 40.00, Kilometraje_Entregado: 2000
+  },
+  { ID_Registro: 2, ID_Alquiler: 2, ID_Empleado: 4, Fecha_Entrega: new Date('2023-07-07'), Combustible_Entregado: 30.00, Kilometraje_Entregado: 1800
+  },
+  { ID_Registro: 3, ID_Alquiler: 3, ID_Empleado: 1, Fecha_Entrega: new Date('2023-07-06'), Combustible_Entregado: 45.00, Kilometraje_Entregado: 2200
+  },
+  { ID_Registro: 4, ID_Alquiler: 4, ID_Empleado: 5, Fecha_Entrega: new Date('2023-07-08'), Combustible_Entregado: 50.00, Kilometraje_Entregado: 2400
+  },
+  { ID_Registro: 5, ID_Alquiler: 5, ID_Empleado: 2, Fecha_Entrega: new Date('2023-07-09'), Combustible_Entregado: 35.00, Kilometraje_Entregado: 1900
+  },
+]);
+
+
+db.Registro_Devolucion.insertMany([
+  { ID_Registro: 1, ID_Alquiler: 1, ID_Empleado: 3, Fecha_Devolucion: new Date('2023-07-10'), Combustible_Devuelto: 10.00, Kilometraje_Devuelto: 2500, Monto_Adicional: 20.00
+  },
+  { ID_Registro: 2, ID_Alquiler: 2, ID_Empleado: 4, Fecha_Devolucion: new Date('2023-07-12'), Combustible_Devuelto: 15.00, Kilometraje_Devuelto: 2100, Monto_Adicional: 15.00
+  },
+  { ID_Registro: 3, ID_Alquiler: 3, ID_Empleado: 1, Fecha_Devolucion: new Date('2023-07-11'), Combustible_Devuelto: 20.00, Kilometraje_Devuelto: 2300, Monto_Adicional: 25.00
+  },
+  { ID_Registro: 4, ID_Alquiler: 4, ID_Empleado: 5, Fecha_Devolucion: new Date('2023-07-13'), Combustible_Devuelto: 25.00, Kilometraje_Devuelto: 2600, Monto_Adicional: 30.00
+  },
+  { ID_Registro: 5, ID_Alquiler: 5, ID_Empleado: 2, Fecha_Devolucion: new Date('2023-07-14'), Combustible_Devuelto: 18.00, Kilometraje_Devuelto: 2000, Monto_Adicional: 12.00
+  },
+]);
