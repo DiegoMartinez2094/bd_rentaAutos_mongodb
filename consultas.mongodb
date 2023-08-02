@@ -84,3 +84,6 @@ db.Alquiler.aggregate([
           }
         }
       ]);
+
+      //.9 Listar los clientes con el DNI específico (por ejemplo, DNI = '123456789'):
+ db.Cliente.find({ DNI: '123456789' }).pretty();
