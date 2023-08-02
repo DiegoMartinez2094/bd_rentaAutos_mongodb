@@ -1,0 +1,4 @@
+use ("renta_autos");
+
+// 1.obtener todos los clientes
+ db.Cliente.find();
