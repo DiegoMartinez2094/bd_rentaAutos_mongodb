@@ -2,3 +2,6 @@ use ("renta_autos");
 
 // 1.obtener todos los clientes
  db.Cliente.find();
+
+  //2. Obtener todos los automóviles disponibles para alquiler:
+  db.Automovil.find({}).pretty();
