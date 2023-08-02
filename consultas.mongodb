@@ -47,3 +47,6 @@ db.Alquiler.aggregate([
   //5.Obtener los detalles del alquiler con el ID_Alquilerespecífico
 
   db.Alquiler.findOne({ ID_Alquiler: 1 });
+
+    //.6 Listar los empleados con el cargo de "Vendedor"
+    db.Empleado.find({ Cargo: 'Vendedor' }).pretty();
