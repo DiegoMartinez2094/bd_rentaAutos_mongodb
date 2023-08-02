@@ -20,3 +20,26 @@ db.Alquiler.aggregate([
       }
     }
   ]);
+
+  // 4.Mostrar todas las reservas pendientes con los datos del cliente y el automóvil reservado
+  db.Reserva.aggregate([
+    {
+      $match: { Estado: 'Pendiente' }
+    },
+    {
+      $lookup: {
+        from: 'Cliente',
+        localField: 'ID_Cliente',
+        foreignField: 'ID_Cliente',
+        as: 'ClienteData'
+      }
+    },
+    {
+      $lookup: {
+        from: 'Automovil',
+        localField: 'ID_Automovil',
+        foreignField: 'ID_Automovil',
+        as: 'AutomovilData'
+      }
+    }
+  ]);
