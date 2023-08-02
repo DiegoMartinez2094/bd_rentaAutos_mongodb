@@ -60,3 +60,27 @@ db.Alquiler.aggregate([
       }
     }
   ]);
+
+    //.8 obtener el costo total de un alquiler específico (por ejemplo, alquiler con ID_Alquiler = 1):
+    db.Alquiler.aggregate([
+        {
+          $match: { ID_Alquiler: 1 }
+        },
+        {
+          $lookup: {
+            from: 'Automovil',
+            localField: 'ID_Automovil',
+            foreignField: 'ID_Automovil',
+            as: 'AutomovilData'
+          }
+        },
+        {
+          $unwind: "$AutomovilData"
+        },
+        {
+          $project: {
+            ID_Alquiler: 1,
+            Costo_Total: { $multiply: ["$AutomovilData.Precio_Diario", { $divide: [{ $subtract: ["$Fecha_Fin", "$Fecha_Inicio"] }, (1000 * 60 * 60 * 24)] }] }
+          }
+        }
+      ]);
