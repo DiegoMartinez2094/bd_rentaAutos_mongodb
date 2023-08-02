@@ -87,3 +87,6 @@ db.Alquiler.aggregate([
 
       //.9 Listar los clientes con el DNI específico (por ejemplo, DNI = '123456789'):
  db.Cliente.find({ DNI: '123456789' }).pretty();
+
+   //.10 Mostrar todos los automóviles con una capacidad mayor a 5 personas. 
+   db.Automovil.find({ Capacidad: { $gt: 5 } }).pretty();
