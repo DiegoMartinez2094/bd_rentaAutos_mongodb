@@ -1,93 +1,186 @@
-use ("renta_autos");
-
 // 1.obtener todos los clientes
- db.Cliente.find();
+use("renta_autos");
+db.Cliente.find();
 
-  //2. Obtener todos los automóviles disponibles para alquiler:
-  db.Automovil.find({}).pretty();
+//2. Obtener todos los automóviles disponibles para alquiler:
+use("renta_autos");
+db.Automovil.find({}).pretty();
 
-  //3. Listar todos los alquileres activos junto con los datos de los clientes relacionados
-  use ("renta_autos");
-  db.Alquiler.aggregate([
-    {
-      $match: { Estado: 'Activo' }
+//3. Listar todos los alquileres activos junto con los datos de los clientes relacionados
+use("renta_autos");
+db.Alquiler.aggregate([
+  // Filtrar los alquileres con Estado: 'Activo'
+  { $match: { Estado: "Activo" } },
+  {
+    // Realizar un $lookup para obtener los datos de cliente relacionados
+    $lookup: {
+      from: "Cliente",
+      localField: "ID_Cliente",
+      foreignField: "ID_Cliente",
+      as: "cliente_data",
     },
-    {
-      $lookup: {
-        from: 'Cliente',
-        localField: 'ID_Cliente',
-        foreignField: 'ID_Cliente',
-        as: 'ClienteData'
+  },
+  { $unwind: "$cliente_data" }, // Desenrollar el resultado del $lookup, ya que puede haber múltiples clientes relacionados para un alquiler
+
+  // Agrupar los datos para obtener el resultado final
+  {
+    $group: {
+      _id: "$ID_Alquiler",
+      ID_Alquiler: { $first: "$ID_Alquiler" },
+      ID_Cliente: { $first: "$ID_Cliente" },
+      ID_Automovil: { $first: "$ID_Automovil" },
+      Fecha_Inicio: { $first: "$Fecha_Inicio" },
+      Fecha_Fin: { $first: "$Fecha_Fin" },
+      Costo_Total: { $first: "$Costo_Total" },
+      Estado: { $first: "$Estado" },
+      Cliente: {
+        $mergeObjects: {
+          Nombre: "$cliente_data.Nombre",
+          Apellido: "$cliente_data.Apellido",
+          DNI: "$cliente_data.DNI",
+          Direccion: "$cliente_data.Direccion",
+          Telefono: "$cliente_data.Telefono",
+          Email: "$cliente_data.Email",
+        },
+      },
+    },
+  },
+]);
+
+// 4.Mostrar todas las reservas pendientes con los datos del cliente y el automóvil reservado
+use("renta_autos");
+db.Reserva.aggregate([
+  // Match para seleccionar solo las reservas pendientes
+  { $match: { Estado: 'Pendiente' } },
+
+  // Lookup para unir con la colección Cliente
+  {
+    $lookup: {
+      from: 'Cliente',
+      localField: 'ID_Cliente',
+      foreignField: 'ID_Cliente',
+      as: 'cliente'
+    }
+  },
+
+  // Desenrollar el array 'cliente' para obtener un solo objeto de cliente por reserva
+  { $unwind: '$cliente' },
+
+  // Lookup para unir con la colección Automovil
+  {
+    $lookup: {
+      from: 'Automovil',
+      localField: 'ID_Automovil',
+      foreignField: 'ID_Automovil',
+      as: 'automovil'
+    }
+  },
+
+  // Desenrollar el array 'automovil' para obtener un solo objeto de automóvil por reserva
+  { $unwind: '$automovil' },
+
+  // Proyectar solo los campos deseados para el resultado final
+  {
+    $project: {
+      _id: 0,
+      ID_Reserva: 1,
+      Fecha_Reserva: 1,
+      Fecha_Inicio: 1,
+      Fecha_Fin: 1,
+      Estado: 1,
+      Cliente: {
+        ID_Cliente: '$cliente.ID_Cliente',
+        Nombre: '$cliente.Nombre',
+        Apellido: '$cliente.Apellido',
+        DNI: '$cliente.DNI',
+        Direccion: '$cliente.Direccion',
+        Telefono: '$cliente.Telefono',
+        Email: '$cliente.Email'
+      },
+      Automovil: {
+        ID_Automovil: '$automovil.ID_Automovil',
+        Marca: '$automovil.Marca',
+        Modelo: '$automovil.Modelo',
+        Anio: '$automovil.Anio',
+        Tipo: '$automovil.Tipo',
+        Capacidad: '$automovil.Capacidad',
+        Precio_Diario: '$automovil.Precio_Diario'
       }
     }
-  ]);
+  }
+]);
 
-  // 4.Mostrar todas las reservas pendientes con los datos del cliente y el automóvil reservado
-  db.Reserva.aggregate([
-    {
-      $match: { Estado: 'Pendiente' }
+//5.Obtener los detalles del alquiler con el ID_Alquilerespecífico
+use("renta_autos");
+db.Alquiler.findOne({ ID_Alquiler: 1 });
+
+//.6 Listar los empleados con el cargo de "Vendedor"
+use("renta_autos");
+db.Empleado.find({ Cargo: "Vendedor" }).pretty();
+
+//.7 Mostrar la cantidad total de automóviles disponibles en cada sucursal:
+
+use("renta_autos");
+db.Sucursal.aggregate([
+  {
+    $lookup: {
+      from: "Sucursal_Automovil",
+      localField: "ID_Sucursal",
+      foreignField: "ID_Sucursal",
+      as: "sucursal_data",
     },
-    {
-      $lookup: {
-        from: 'Cliente',
-        localField: 'ID_Cliente',
-        foreignField: 'ID_Cliente',
-        as: 'ClienteData'
-      }
+  },
+  { $unwind: "$sucursal_data" },
+  {
+    $group: {
+      _id: "$ID_Sucursal",
+      Nombre: { $first: "$Nombre" },
+      Sucursal_Automovil: {
+        $mergeObjects: {
+          Cantidad_Disponible: "$sucursal_data.Cantidad_Disponible",
+        },
+      },
     },
-    {
-      $lookup: {
-        from: 'Automovil',
-        localField: 'ID_Automovil',
-        foreignField: 'ID_Automovil',
-        as: 'AutomovilData'
-      }
-    }
-  ]);
+  },
+]);
 
-  //5.Obtener los detalles del alquiler con el ID_Alquilerespecífico
+//.8 obtener el costo total de un alquiler específico (por ejemplo, alquiler con ID_Alquiler = 1):
+use("renta_autos");
+db.Alquiler.aggregate([
+  {
+    $match: { ID_Alquiler: 1 },
+  },
+  {
+    $lookup: {
+      from: "Automovil",
+      localField: "ID_Automovil",
+      foreignField: "ID_Automovil",
+      as: "AutomovilData",
+    },
+  },
+  {
+    $unwind: "$AutomovilData",
+  },
+  {
+    $project: {
+      ID_Alquiler: 1,
+      Costo_Total: {
+        $multiply: [
+          "$AutomovilData.Precio_Diario",
+          {
+            $divide: [
+              { $subtract: ["$Fecha_Fin", "$Fecha_Inicio"] },
+              1000 * 60 * 60 * 24,
+            ],
+          },
+        ],
+      },
+    },
+  },
+]);
 
-  db.Alquiler.findOne({ ID_Alquiler: 1 });
+//.9 Listar los clientes con el DNI específico (por ejemplo, DNI = '123456789'):
+db.Cliente.find({ DNI: "123456789" }).pretty();
 
-    //.6 Listar los empleados con el cargo de "Vendedor"
-    db.Empleado.find({ Cargo: 'Vendedor' }).pretty();
-
-     //.7 Mostrar la cantidad total de automóviles disponibles en cada sucursal:
-  db.Sucursal_Automovil.aggregate([
-    {
-      $group: {
-        _id: "$ID_Sucursal",
-        Total_Automoviles_Disponibles: { $sum: "$Cantidad_Disponible" }
-      }
-    }
-  ]);
-
-    //.8 obtener el costo total de un alquiler específico (por ejemplo, alquiler con ID_Alquiler = 1):
-    db.Alquiler.aggregate([
-        {
-          $match: { ID_Alquiler: 1 }
-        },
-        {
-          $lookup: {
-            from: 'Automovil',
-            localField: 'ID_Automovil',
-            foreignField: 'ID_Automovil',
-            as: 'AutomovilData'
-          }
-        },
-        {
-          $unwind: "$AutomovilData"
-        },
-        {
-          $project: {
-            ID_Alquiler: 1,
-            Costo_Total: { $multiply: ["$AutomovilData.Precio_Diario", { $divide: [{ $subtract: ["$Fecha_Fin", "$Fecha_Inicio"] }, (1000 * 60 * 60 * 24)] }] }
-          }
-        }
-      ]);
-
-      //.9 Listar los clientes con el DNI específico (por ejemplo, DNI = '123456789'):
- db.Cliente.find({ DNI: '123456789' }).pretty();
-
-   //.10 Mostrar todos los automóviles con una capacidad mayor a 5 personas. 
-   db.Automovil.find({ Capacidad: { $gt: 5 } }).pretty();
+//.10 Mostrar todos los automóviles con una capacidad mayor a 5 personas.
+db.Automovil.find({ Capacidad: { $gt: 5 } }).pretty();
